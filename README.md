@@ -35,7 +35,9 @@ This app was made to meet the requirements of the "Mobile App Project" universit
 - ### 12.05.2021:
 	- [ ] 3rd Progress report;
 - ### End of May 2021:
-	- [ ] Possibility of adding an ingredient to a recipe and later modify it;
+	- [ ] Possibility to add an ingredient to a recipe and later modify it;
+	- [ ] Recipe filtering / sorting;
+	- [ ] Favorite recipes (list or filtering option)
 - ### 26.05.2021:
 	- [ ] App prototype;
 - ### End of semester (17.06.2021):
