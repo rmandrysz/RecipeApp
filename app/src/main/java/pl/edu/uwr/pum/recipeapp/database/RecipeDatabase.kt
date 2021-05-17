@@ -20,7 +20,7 @@ import java.security.AccessControlContext
 )
 abstract class RecipeDatabase : RoomDatabase(){
 
-    abstract val recipeDao: RecipeDAO
+    abstract fun recipeDao(): RecipeDAO
 
     companion object {
         @Volatile

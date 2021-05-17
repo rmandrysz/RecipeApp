@@ -1,6 +1,7 @@
 package pl.edu.uwr.pum.recipeapp.model
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.model.relations.IngredientWithRecipes
@@ -26,5 +27,8 @@ interface RecipeDAO {
     @Transaction
     @Query("SELECT * FROM ingredient WHERE ingredientName = :ingredientName")
     suspend fun getIngredientWithRecipes(ingredientName: String): List<IngredientWithRecipes>
+
+    @Query("SELECT * FROM recipe")
+    fun getRecipes(): Flow<List<Recipe>>
 
 }
