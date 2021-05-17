@@ -19,14 +19,14 @@ This app was made to meet the requirements of the "Mobile App Project" universit
 
 ## Production schedule
 - ### End of March 2021:
-	- [ ] Initial plan for the UI;
-	- [ ] Initial layout of the app;
-	- [ ] Color scheme design;
+	- [x] Initial plan for the UI;
+	- [x] Initial layout of the app;
+	- [x] Color scheme design;
 - ### 31.03.2021:
-	- [ ] 1st Progress report;
+	- [x] 1st Progress report;
 - ### First half of April 2021:
-	- [ ] Initial design of the app's database (likely to be modified accordingly as needs arise);
-	- [ ] Initial MVVM architecture structure - preparatory layout of project components;
+	- [x] Initial design of the app's database (likely to be modified accordingly as needs arise);
+	- [x] Initial MVVM architecture structure - preparatory layout of project components;
 - ### 21.04.2021:
 	- [ ] 2nd Progress Report;
 - ### First half of May 2021:
