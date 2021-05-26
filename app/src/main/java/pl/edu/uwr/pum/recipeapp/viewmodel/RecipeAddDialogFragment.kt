@@ -5,19 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import pl.edu.uwr.pum.recipeapp.R
-import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeAddBinding
+import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeAddDialogBinding
 
-class RecipeAddFragment : Fragment() {
-    private lateinit var binding: FragmentRecipeAddBinding
+class RecipeAddDialogFragment : DialogFragment() {
+    private lateinit var binding: FragmentRecipeAddDialogBinding
     private val viewModel: ViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
-        binding = FragmentRecipeAddBinding.inflate(inflater, container, false)
+        binding = FragmentRecipeAddDialogBinding.inflate(inflater, container, false)
 
         return binding.root
     }

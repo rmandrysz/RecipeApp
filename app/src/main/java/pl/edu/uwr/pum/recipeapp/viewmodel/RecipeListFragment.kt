@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,7 @@ class RecipeListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
+        super.onCreateView(inflater, container, savedInstanceState)
 
         binding = FragmentRecipeListBinding.inflate(inflater, container, false)
 
@@ -52,7 +54,12 @@ class RecipeListFragment : Fragment() {
                     viewModel.onRecipeSwiped(recipe)
                 }
             }).attachToRecyclerView(recipeRecyclerView)
+
+            fabAddRecipe.setOnClickListener {
+                viewModel.onAddNewRecipeClick()
+            }
         }
+
         viewModel.allRecipes.observe(viewLifecycleOwner) {
             recipeAdapter.submitList(it)
         }
@@ -65,6 +72,13 @@ class RecipeListFragment : Fragment() {
                                 .setAction("UNDO") {
                                     viewModel.onUndoDeleteRecipeClick(event.recipe)
                                 }.show()
+                    }
+                    is ViewModel.RecipeEvent.NavigateToAddRecipeDialog -> {
+                        val action = RecipeListFragmentDirections.actionRecipeListFragmentToRecipeAddDialogFragment()
+                        findNavController().navigate(action)
+                    }
+                    is ViewModel.RecipeEvent.NavigateToEditRecipeDialog -> {
+
                     }
                 }
             }

@@ -56,8 +56,18 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
         repository.insertRecipe(recipe)
     }
 
+    fun onAddNewRecipeClick() = viewModelScope.launch {
+        recipeEventChannel.send(RecipeEvent.NavigateToAddRecipeDialog)
+    }
+
+    fun onRecipeSelected(recipe: Recipe) = viewModelScope.launch {
+        recipeEventChannel.send(RecipeEvent.NavigateToEditRecipeDialog(recipe))
+    }
+
     sealed class RecipeEvent {
         data class ShowUndoDeleteRecipeMessage(val recipe: Recipe) : RecipeEvent()
+        object NavigateToAddRecipeDialog : RecipeEvent()
+        data class NavigateToEditRecipeDialog(val recipe: Recipe) : RecipeEvent()
     }
 }
 

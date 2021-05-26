@@ -9,5 +9,15 @@
         android:id="@+id/recipeListFragment2"
         android:name="pl.edu.uwr.pum.recipeapp.viewmodel.RecipeListFragment"
         android:label="fragment_recipe_list"
-        tools:layout="@layout/fragment_recipe_list" />
+        tools:layout="@layout/fragment_recipe_list" >
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeAddDialogFragment"
+            app:destination="@id/recipeAddDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/recipeAddDialogFragment"
+        android:name="pl.edu.uwr.pum.recipeapp.viewmodel.RecipeAddDialogFragment"
+        android:label="RecipeAddDialogFragment"
+        tools:layout="@layout/fragment_recipe_add_dialog"
+        />
 </navigation>
