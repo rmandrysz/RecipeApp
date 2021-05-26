@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import pl.edu.uwr.pum.recipeapp.model.RecipeDAO
 import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
@@ -18,7 +19,7 @@ import java.security.AccessControlContext
     ],
     version = 1,
 )
-abstract class RecipeDatabase : RoomDatabase(){
+abstract class RecipeDatabase : RoomDatabase() {
 
     abstract fun recipeDao(): RecipeDAO
 
