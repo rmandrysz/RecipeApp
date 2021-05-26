@@ -3,7 +3,6 @@ package pl.edu.uwr.pum.recipeapp.viewmodel
 import android.app.Application
 import androidx.annotation.NonNull
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.repository.Repository
@@ -24,8 +24,8 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
     val sortOrder = MutableStateFlow(SortOrder.BY_NAME)
     val showFavorite = MutableStateFlow(false)
 
-    private val recipeEventChannel = Channel<RecipeEvent>()
-    val recipeEvent = recipeEventChannel.receiveAsFlow()
+    private val recipeListEventChannel = Channel<RecipeListEvent>()
+    val recipeListEvent = recipeListEventChannel.receiveAsFlow()
 
     init {
         val dao = RecipeDatabase.getInstance(application).recipeDao()
@@ -37,8 +37,7 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
         searchQuery,
         sortOrder,
         showFavorite
-    ) {
-        query, sortOrder, showFavorite ->
+    ) { query, sortOrder, showFavorite ->
         Triple(query, sortOrder, showFavorite)
     }.flatMapLatest { (query, sortOrder, showFavorite) ->
         repository.getRecipes(query, sortOrder, showFavorite)
@@ -49,7 +48,7 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
 
     fun onRecipeSwiped(recipe: Recipe) = viewModelScope.launch {
         repository.deleteRecipe(recipe)
-        recipeEventChannel.send(RecipeEvent.ShowUndoDeleteRecipeMessage(recipe))
+        recipeListEventChannel.send(RecipeListEvent.ShowUndoDeleteRecipeListMessage(recipe))
     }
 
     fun onUndoDeleteRecipeClick(recipe: Recipe) = viewModelScope.launch {
@@ -57,17 +56,28 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
     }
 
     fun onAddNewRecipeClick() = viewModelScope.launch {
-        recipeEventChannel.send(RecipeEvent.NavigateToAddRecipeDialog)
+        recipeListEventChannel.send(RecipeListEvent.NavigateToAddRecipeListDialog)
     }
 
     fun onRecipeSelected(recipe: Recipe) = viewModelScope.launch {
-        recipeEventChannel.send(RecipeEvent.NavigateToEditRecipeDialog(recipe))
+        recipeListEventChannel.send(RecipeListEvent.NavigateToEditRecipeListDialog(recipe))
     }
 
-    sealed class RecipeEvent {
-        data class ShowUndoDeleteRecipeMessage(val recipe: Recipe) : RecipeEvent()
-        object NavigateToAddRecipeDialog : RecipeEvent()
-        data class NavigateToEditRecipeDialog(val recipe: Recipe) : RecipeEvent()
+    fun onAddResult(result: Int) {
+        when (result) {
+            ADD_RECIPE_RESULT_OK -> showRecipeSavedMessage("Recipe Saved")
+        }
+    }
+
+    private fun showRecipeSavedMessage(msg: String) = viewModelScope.launch {
+        recipeListEventChannel.send(RecipeListEvent.ShowRecipeSavedMessage(msg))
+    }
+
+    sealed class RecipeListEvent {
+        data class ShowUndoDeleteRecipeListMessage(val recipe: Recipe) : RecipeListEvent()
+        object NavigateToAddRecipeListDialog : RecipeListEvent()
+        data class NavigateToEditRecipeListDialog(val recipe: Recipe) : RecipeListEvent()
+        data class ShowRecipeSavedMessage(val msg: String) : RecipeListEvent()
     }
 }
 

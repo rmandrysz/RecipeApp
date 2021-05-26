@@ -3,9 +3,8 @@ package pl.edu.uwr.pum.recipeapp.viewmodel
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
-import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import pl.edu.uwr.pum.recipeapp.R
 import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeListBinding
@@ -24,6 +24,7 @@ class RecipeListFragment : Fragment() {
     private lateinit var binding: FragmentRecipeListBinding
     private val viewModel: ViewModel by viewModels()
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -60,25 +61,33 @@ class RecipeListFragment : Fragment() {
             }
         }
 
+        setFragmentResultListener("add_request") { _, bundle ->
+            val result = bundle.getInt("add_result")
+            viewModel.onAddResult(result)
+        }
+
         viewModel.allRecipes.observe(viewLifecycleOwner) {
             recipeAdapter.submitList(it)
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.recipeEvent.collect { event ->
+            viewModel.recipeListEvent.collect { event ->
                 when (event) {
-                    is ViewModel.RecipeEvent.ShowUndoDeleteRecipeMessage -> {
+                    is ViewModel.RecipeListEvent.ShowUndoDeleteRecipeListMessage -> {
                             Snackbar.make(requireView(), "Recipe deleted", Snackbar.LENGTH_LONG)
                                 .setAction("UNDO") {
                                     viewModel.onUndoDeleteRecipeClick(event.recipe)
                                 }.show()
                     }
-                    is ViewModel.RecipeEvent.NavigateToAddRecipeDialog -> {
+                    is ViewModel.RecipeListEvent.NavigateToAddRecipeListDialog -> {
                         val action = RecipeListFragmentDirections.actionRecipeListFragmentToRecipeAddDialogFragment()
                         findNavController().navigate(action)
                     }
-                    is ViewModel.RecipeEvent.NavigateToEditRecipeDialog -> {
+                    is ViewModel.RecipeListEvent.NavigateToEditRecipeListDialog -> {
 
+                    }
+                    is ViewModel.RecipeListEvent.ShowRecipeSavedMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }
