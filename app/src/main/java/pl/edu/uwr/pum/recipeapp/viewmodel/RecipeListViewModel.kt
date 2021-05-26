@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_CANCELLED
 import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_OK
+import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_CANCELLED
+import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.repository.Repository
@@ -29,7 +32,7 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
 
     init {
         val dao = RecipeDatabase.getInstance(application).recipeDao()
-        repository = Repository(dao)
+        repository = Repository.getInstance(application, dao)
     }
 
     @ExperimentalCoroutinesApi
@@ -66,12 +69,25 @@ class ViewModel(@NonNull application: Application) : AndroidViewModel(applicatio
     fun onAddResult(result: Int) {
         when (result) {
             ADD_RECIPE_RESULT_OK -> showRecipeSavedMessage("Recipe Saved")
+            ADD_RECIPE_RESULT_CANCELLED -> showRecipeSavedMessage("Operation Cancelled")
         }
+    }
+
+    fun onEditResult(result: Int) {
+
+        when (result) {
+            EDIT_RECIPE_RESULT_OK -> showRecipeSavedMessage("Recipe Saved")
+            EDIT_RECIPE_RESULT_CANCELLED -> showRecipeSavedMessage("Operation Cancelled")
+        }
+
+
     }
 
     private fun showRecipeSavedMessage(msg: String) = viewModelScope.launch {
         recipeListEventChannel.send(RecipeListEvent.ShowRecipeSavedMessage(msg))
     }
+
+
 
     sealed class RecipeListEvent {
         data class ShowUndoDeleteRecipeListMessage(val recipe: Recipe) : RecipeListEvent()

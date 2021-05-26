@@ -13,10 +13,22 @@
         <action
             android:id="@+id/action_recipeListFragment_to_recipeAddDialogFragment"
             app:destination="@id/recipeAddDialogFragment" />
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeEditFragment"
+            app:destination="@id/recipeEditFragment" />
     </fragment>
     <dialog
         android:id="@+id/recipeAddDialogFragment"
         android:name="pl.edu.uwr.pum.recipeapp.viewmodel.RecipeAddDialogFragment"
         android:label="Add Recipe"
         tools:layout="@layout/fragment_recipe_add_dialog" />
+    <fragment
+        android:id="@+id/recipeEditFragment"
+        android:name="pl.edu.uwr.pum.recipeapp.viewmodel.RecipeEditFragment"
+        android:label="Edit Recipe"
+        tools:layout="@layout/fragment_recipe_edit">
+        <argument
+            android:name="recipe"
+            app:argType="pl.edu.uwr.pum.recipeapp.model.entities.Recipe" />
+    </fragment>
 </navigation>

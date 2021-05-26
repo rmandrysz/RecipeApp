@@ -22,6 +22,9 @@ interface RecipeDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipeIngredientCrossRef(crossRef: RecipeIngredientCrossRef)
 
+    @Update
+    suspend fun updateRecipe(recipe: Recipe)
+
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
 

@@ -1,0 +1,86 @@
+package pl.edu.uwr.pum.recipeapp.viewmodel
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import pl.edu.uwr.pum.recipeapp.R
+import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeEditBinding
+
+class RecipeEditFragment : Fragment() {
+
+    private lateinit var binding: FragmentRecipeEditBinding
+    private val args: RecipeEditFragmentArgs by navArgs()
+    private val viewModel: RecipeEditViewModel by viewModels()
+
+
+    @ExperimentalCoroutinesApi
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+
+        viewModel.recipe = args.recipe
+
+        binding = FragmentRecipeEditBinding.inflate(inflater, container, false)
+
+        binding.apply {
+            recipeTitleEditText.setText(viewModel.recipe.recipeName)
+            recipeDescriptionEditText.setText(viewModel.recipe.recipeDescription)
+            recipeFavoriteCheckBox.isChecked = viewModel.recipe.isFavorite
+            val creationDate = viewModel.recipe.dateFormatted
+            recipeCreationDateTextView.text = getString(R.string.creationDate, creationDate)
+
+            recipeFavoriteCheckBox.jumpDrawablesToCurrentState()
+
+            recipeTitleEditText.addTextChangedListener {
+                viewModel.recipe.recipeName = it.toString()
+            }
+
+            recipeDescriptionEditText.addTextChangedListener {
+                viewModel.recipe.recipeDescription = it.toString()
+            }
+
+            recipeFavoriteCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.recipe.isFavorite = isChecked
+            }
+
+            fabRecipeSubmit.setOnClickListener {
+                viewModel.onSaveClick()
+            }
+
+        }
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.editRecipeEvent.collect { event ->
+                when (event) {
+                    is RecipeEditViewModel.EditRecipeEvent.ShowInvalidInputMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_LONG).show()
+                    }
+                    is RecipeEditViewModel.EditRecipeEvent.NavigateBackWithResult -> {
+                        binding.recipeDescriptionEditText.clearFocus()
+                        binding.recipeTitleEditText.clearFocus()
+                        setFragmentResult(
+                            "edit_request",
+                            bundleOf("edit_result" to event.result)
+                        )
+                        findNavController().popBackStack()
+                    }
+                }
+            }
+        }
+
+        return binding.root
+    }
+
+}

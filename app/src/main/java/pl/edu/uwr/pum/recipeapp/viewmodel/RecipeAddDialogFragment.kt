@@ -30,6 +30,10 @@ class RecipeAddDialogFragment : DialogFragment() {
             dialogSubmitButton.setOnClickListener {
                 viewModel.onSaveClick(dialogRecipeTitleEditText.text.toString())
             }
+
+            dialogCancelButton.setOnClickListener {
+                viewModel.onCancelClick()
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

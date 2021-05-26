@@ -13,9 +13,9 @@ import java.util.*
 data class Recipe(
     @PrimaryKey(autoGenerate = true)
     val recipeId: Int = 0,
-    val recipeName: String,
-    val recipeDescription: String = "",
-    val isFavorite: Boolean = false,
+    var recipeName: String,
+    var recipeDescription: String = "",
+    var isFavorite: Boolean = false,
     val date: Long = System.currentTimeMillis()
 ) : Parcelable {
     val dateFormatted : String

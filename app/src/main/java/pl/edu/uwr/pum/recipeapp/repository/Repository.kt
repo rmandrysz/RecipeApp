@@ -24,6 +24,11 @@ class Repository(private val dao: RecipeDAO) {
         dao.insertRecipe(recipe)
     }
 
+    suspend fun updateRecipe(recipe: Recipe)
+    {
+        dao.updateRecipe(recipe)
+    }
+
 
     companion object {
         @Volatile

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_CANCELLED
 import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
@@ -22,7 +23,7 @@ class RecipeAddViewModel(@NonNull application: Application) : AndroidViewModel(a
     init {
         val dao = RecipeDatabase.getInstance(application).recipeDao()
 
-        repository = Repository(dao)
+        repository = Repository.getInstance(application, dao)
     }
 
     fun onSaveClick(title: String) {
@@ -42,6 +43,10 @@ class RecipeAddViewModel(@NonNull application: Application) : AndroidViewModel(a
     private fun createNewRecipe(recipe: Recipe) = viewModelScope.launch {
         repository.insertRecipe(recipe)
         addRecipeEventChannel.send(AddRecipeEvent.NavigateBackWithResult(ADD_RECIPE_RESULT_OK))
+    }
+
+    fun onCancelClick() = viewModelScope.launch {
+        addRecipeEventChannel.send(AddRecipeEvent.NavigateBackWithResult(ADD_RECIPE_RESULT_CANCELLED))
     }
 
     sealed class AddRecipeEvent {

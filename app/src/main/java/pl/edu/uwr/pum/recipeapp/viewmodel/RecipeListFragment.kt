@@ -16,10 +16,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import pl.edu.uwr.pum.recipeapp.R
 import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeListBinding
+import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.util.onQueryTextChanged
 import pl.edu.uwr.pum.recipeapp.view.RecipeAdapter
 
-class RecipeListFragment : Fragment() {
+class RecipeListFragment : Fragment(R.layout.fragment_recipe_list), RecipeAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentRecipeListBinding
     private val viewModel: ViewModel by viewModels()
@@ -31,7 +32,7 @@ class RecipeListFragment : Fragment() {
 
         binding = FragmentRecipeListBinding.inflate(inflater, container, false)
 
-        val recipeAdapter = RecipeAdapter()
+        val recipeAdapter = RecipeAdapter(this)
 
         binding.apply {
             recipeRecyclerView.apply {
@@ -59,11 +60,17 @@ class RecipeListFragment : Fragment() {
             fabAddRecipe.setOnClickListener {
                 viewModel.onAddNewRecipeClick()
             }
+
         }
 
         setFragmentResultListener("add_request") { _, bundle ->
             val result = bundle.getInt("add_result")
             viewModel.onAddResult(result)
+        }
+
+        setFragmentResultListener("edit_request") {_, bundle ->
+            val result = bundle.getInt("edit_result")
+            viewModel.onEditResult(result)
         }
 
         viewModel.allRecipes.observe(viewLifecycleOwner) {
@@ -84,7 +91,8 @@ class RecipeListFragment : Fragment() {
                         findNavController().navigate(action)
                     }
                     is ViewModel.RecipeListEvent.NavigateToEditRecipeListDialog -> {
-
+                        val action = RecipeListFragmentDirections.actionRecipeListFragmentToRecipeEditFragment(event.recipe)
+                        findNavController().navigate(action)
                     }
                     is ViewModel.RecipeListEvent.ShowRecipeSavedMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
@@ -128,5 +136,9 @@ class RecipeListFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onItemClick(recipe: Recipe) {
+        viewModel.onRecipeSelected(recipe)
     }
 }
