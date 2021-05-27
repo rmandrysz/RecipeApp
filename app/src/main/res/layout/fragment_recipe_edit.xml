@@ -29,7 +29,8 @@
                     android:textSize="25sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:ellipsize="end"/>
 
                 <CheckBox
                     android:id="@+id/recipeFavoriteCheckBox"
