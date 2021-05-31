@@ -17,8 +17,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import pl.edu.uwr.pum.recipeapp.R
 import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeEditBinding
+import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
+import pl.edu.uwr.pum.recipeapp.view.IngredientAdapter
 
-class RecipeEditFragment : Fragment() {
+class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentRecipeEditBinding
     private val args: RecipeEditFragmentArgs by navArgs()
@@ -33,6 +35,8 @@ class RecipeEditFragment : Fragment() {
         viewModel.recipe = args.recipe
 
         binding = FragmentRecipeEditBinding.inflate(inflater, container, false)
+
+        val ingredientAdapter = IngredientAdapter(this)
 
         binding.apply {
             recipeTitleEditText.setText(viewModel.recipe.recipeName)
@@ -81,6 +85,10 @@ class RecipeEditFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onItemClick(crossReff: RecipeIngredientCrossRef) {
+        viewModel.onIngredientClick(crossReff)
     }
 
 }

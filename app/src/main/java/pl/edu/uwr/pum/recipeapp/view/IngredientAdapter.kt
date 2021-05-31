@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import pl.edu.uwr.pum.recipeapp.databinding.IngredientCardBinding
 import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
 
-class RecipeIngredientCrossRefAdapter(private val listener: OnItemClickListener)
-    : ListAdapter<RecipeIngredientCrossRef, RecipeIngredientCrossRefAdapter.RecipeIngredientCrossRefViewHolder>(RecipeIngredientCrossRefAdapter.DiffCallback())
+class IngredientAdapter(private val listener: OnItemClickListener)
+    : ListAdapter<RecipeIngredientCrossRef, IngredientAdapter.RecipeIngredientCrossRefViewHolder>(IngredientAdapter.DiffCallback())
 {
     inner class RecipeIngredientCrossRefViewHolder(val binding: IngredientCardBinding): RecyclerView.ViewHolder(binding.root)
     {

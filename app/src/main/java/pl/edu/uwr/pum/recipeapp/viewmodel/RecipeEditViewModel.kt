@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
+import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
 import pl.edu.uwr.pum.recipeapp.repository.Repository
 
 class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(application) {
@@ -42,6 +43,10 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
     private fun updateRecipe() = viewModelScope.launch {
         repository.updateRecipe(recipe)
         editRecipeEventChannel.send(EditRecipeEvent.NavigateBackWithResult(EDIT_RECIPE_RESULT_OK))
+    }
+
+    fun onIngredientClick(crossReff: RecipeIngredientCrossRef) {
+
     }
 
     sealed class EditRecipeEvent {

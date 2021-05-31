@@ -1,4 +1,8 @@
 package pl.edu.uwr.pum.recipeapp.viewmodel
 
-class IngredientAddViewModel {
+import android.app.Application
+import androidx.annotation.NonNull
+import androidx.lifecycle.AndroidViewModel
+
+class IngredientAddViewModel(@NonNull application: Application) : AndroidViewModel(application) {
 }
