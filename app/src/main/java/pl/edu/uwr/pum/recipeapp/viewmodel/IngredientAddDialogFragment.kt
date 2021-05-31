@@ -35,7 +35,7 @@ class IngredientAddFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ingredient_add, container, false)
+        return inflater.inflate(R.layout.fragment_ingredient_add_dialog, container, false)
     }
 
     companion object {
