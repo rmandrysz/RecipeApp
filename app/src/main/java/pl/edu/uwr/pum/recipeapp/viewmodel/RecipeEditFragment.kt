@@ -63,6 +63,10 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                 viewModel.onSaveClick()
             }
 
+            fabAddIngredient.setOnClickListener {
+                viewModel.onAddIngredientClick()
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -80,6 +84,12 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                         )
                         findNavController().popBackStack()
                     }
+                    is RecipeEditViewModel.EditRecipeEvent.NavigateToAddIngredientDialog -> {
+                        val action =
+                            RecipeEditFragmentDirections
+                                .actionRecipeEditFragmentToIngredientAddDialogFragment()
+                        findNavController().navigate(action)
+                    }
                 }
             }
         }
@@ -87,8 +97,8 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
         return binding.root
     }
 
-    override fun onItemClick(crossReff: RecipeIngredientCrossRef) {
-        viewModel.onIngredientClick(crossReff)
+    override fun onItemClick(crossRef: RecipeIngredientCrossRef) {
+        viewModel.onIngredientClick(crossRef)
     }
 
 }
