@@ -26,11 +26,40 @@
             android:layout_margin="16dp"
             android:hint="Name"
             android:textSize="25sp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ingredientDialogHeaderTextView" />
+
+        <TextView
+            android:id="@+id/ingredientDialogAmountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="Amount:"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="@id/ingredientDialogAmountEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ingredientDialogAmountEditText"
+            app:layout_goneMarginStart="32dp" />
+
+        <EditText
+            android:id="@+id/ingredientDialogAmountEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
+            android:hint="Amount"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ingredientDialogAmountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/ingredientDialogTitleEditText" />
 
         <Button
             android:id="@+id/ingredientDialogCancelButton"
@@ -39,10 +68,10 @@
             android:layout_margin="16dp"
             android:text="CANCEL"
             android:textSize="14sp"
-            app:layout_constraintRight_toLeftOf="@+id/ingredientDialogSubmitButton"
             app:layout_constraintEnd_toStartOf="@id/ingredientDialogSubmitButton"
+            app:layout_constraintRight_toLeftOf="@+id/ingredientDialogSubmitButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingredientDialogTitleEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/ingredientDialogAmountEditText" />
 
         <Button
             android:id="@+id/ingredientDialogSubmitButton"
@@ -52,8 +81,8 @@
             android:text="SUBMIT"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingredientDialogTitleEditText"
-            app:layout_constraintStart_toEndOf="@id/ingredientDialogCancelButton"/>
+            app:layout_constraintStart_toEndOf="@id/ingredientDialogCancelButton"
+            app:layout_constraintTop_toBottomOf="@+id/ingredientDialogAmountEditText" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

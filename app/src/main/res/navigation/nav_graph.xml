@@ -38,5 +38,9 @@
         android:id="@+id/ingredientAddDialogFragment"
         android:name="pl.edu.uwr.pum.recipeapp.viewmodel.IngredientAddDialogFragment"
         android:label="IngredientAddDialogFragment"
-        tools:layout="@layout/fragment_ingredient_add_dialog"/>
+        tools:layout="@layout/fragment_ingredient_add_dialog">
+        <argument
+            android:name="recipe"
+            app:argType="pl.edu.uwr.pum.recipeapp.model.entities.Recipe" />
+    </dialog>
 </navigation>

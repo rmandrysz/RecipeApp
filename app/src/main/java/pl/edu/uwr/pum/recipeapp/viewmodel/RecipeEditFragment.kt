@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -69,6 +70,11 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
 
         }
 
+        setFragmentResultListener("add_request") {_, bundle ->
+            val result = bundle.getInt("add_result")
+            viewModel.onAddResult(result)
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.editRecipeEvent.collect { event ->
                 when (event) {
@@ -87,8 +93,11 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                     is RecipeEditViewModel.EditRecipeEvent.NavigateToAddIngredientDialog -> {
                         val action =
                             RecipeEditFragmentDirections
-                                .actionRecipeEditFragmentToIngredientAddDialogFragment()
+                                .actionRecipeEditFragmentToIngredientAddDialogFragment(viewModel.recipe)
                         findNavController().navigate(action)
+                    }
+                    is RecipeEditViewModel.EditRecipeEvent.ShowIngredientSavedMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -97,8 +106,8 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
         return binding.root
     }
 
-    override fun onItemClick(crossRef: RecipeIngredientCrossRef) {
-        viewModel.onIngredientClick(crossRef)
+    override fun onItemClick(recipeIngredientCrossRef: RecipeIngredientCrossRef) {
+        viewModel.onIngredientClick(recipeIngredientCrossRef)
     }
 
 }
