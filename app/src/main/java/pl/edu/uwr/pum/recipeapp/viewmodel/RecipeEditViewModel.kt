@@ -4,8 +4,12 @@ import android.app.Application
 import androidx.annotation.NonNull
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_CANCELLED
@@ -18,21 +22,24 @@ import pl.edu.uwr.pum.recipeapp.repository.Repository
 
 class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(application) {
 
-    private val repository: Repository
+    private val repository = Repository.getInstance(application, RecipeDatabase.getInstance(application).recipeDao())
     lateinit var recipe: Recipe
 
     private val editRecipeEventChannel = Channel<EditRecipeEvent>()
     val editRecipeEvent = editRecipeEventChannel.receiveAsFlow()
 
-    // TODO Implement recyclerview adapter observing associated ingredients
-//    private val allIngredients: LiveData<List<Ingredient>>
+    val associatedRecipe = MutableStateFlow(-1)
+    private val ingredientFlow = associatedRecipe.flatMapLatest {
+        repository.getAssociatedIngredients(it)
+    }
+
+    val allIngredients = ingredientFlow.asLiveData()
 
     init {
-        val dao = RecipeDatabase.getInstance(application).recipeDao()
 
-        repository = Repository.getInstance(application, dao)
-
-//        allIngredients.observe(repository.get)
+//        recipe = Recipe(recipeName = "")
+//
+//        allIngredients = repository.getAssociatedIngredients(recipe)
     }
 
     fun onSaveClick() {
@@ -69,6 +76,11 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
 
     private fun showIngredientSavedMessage(msg: String) = viewModelScope.launch {
         editRecipeEventChannel.send(EditRecipeEvent.ShowIngredientSavedMessage(msg))
+    }
+
+    fun initRecipe(newRecipe: Recipe) {
+        recipe = newRecipe
+        associatedRecipe.value = newRecipe.recipeId
     }
 
     sealed class EditRecipeEvent {

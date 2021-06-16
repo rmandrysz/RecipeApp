@@ -17,7 +17,6 @@
                 android:layout_height="wrap_content"
                 tools:context=".viewmodel.RecipeEditFragment">
 
-
                 <EditText
                     android:id="@+id/recipeTitleEditText"
                     android:layout_width="match_parent"
@@ -25,8 +24,8 @@
                     android:layout_margin="16dp"
                     android:autofillHints="true"
                     android:hint="Title"
-                    android:inputType="text"
                     android:textSize="25sp"
+                    android:ellipsize="end"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +72,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ingredientListRecyclerView" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

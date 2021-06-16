@@ -1,6 +1,7 @@
 package pl.edu.uwr.pum.recipeapp.viewmodel
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -33,13 +35,14 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        viewModel.recipe = args.recipe
+        viewModel.initRecipe(args.recipe)
 
         binding = FragmentRecipeEditBinding.inflate(inflater, container, false)
 
         val ingredientAdapter = IngredientAdapter(this)
 
         binding.apply {
+
             recipeTitleEditText.setText(viewModel.recipe.recipeName)
             recipeDescriptionEditText.setText(viewModel.recipe.recipeDescription)
             recipeFavoriteCheckBox.isChecked = viewModel.recipe.isFavorite
@@ -68,12 +71,23 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                 viewModel.onAddIngredientClick()
             }
 
+            ingredientListRecyclerView.apply {
+                adapter = ingredientAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+            }
+
         }
 
         setFragmentResultListener("add_request") {_, bundle ->
             val result = bundle.getInt("add_result")
             viewModel.onAddResult(result)
         }
+
+        viewModel.allIngredients.observe(viewLifecycleOwner, {
+            ingredientAdapter.notifyDataSetChanged()
+            ingredientAdapter.submitList(it)
+        })
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.editRecipeEvent.collect { event ->

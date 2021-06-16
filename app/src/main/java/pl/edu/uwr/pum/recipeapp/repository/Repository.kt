@@ -1,9 +1,6 @@
 package pl.edu.uwr.pum.recipeapp.repository
 
 import android.content.Context
-import androidx.room.Room
-import kotlinx.coroutines.flow.MutableStateFlow
-import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.RecipeDAO
 import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
@@ -37,6 +34,11 @@ class Repository(private val dao: RecipeDAO) {
         dao.insertIngredient(ingredient)
         dao.insertRecipeIngredientCrossRef(ref)
     }
+
+    fun getAssociatedIngredients(recipeId: Int) =
+        dao.getAssociatedReferences(recipeId)
+
+
 
 
     companion object {
