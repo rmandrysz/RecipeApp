@@ -1,11 +1,10 @@
 package pl.edu.uwr.pum.recipeapp.repository
 
 import android.content.Context
-import androidx.room.Room
-import kotlinx.coroutines.flow.MutableStateFlow
-import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.RecipeDAO
+import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
+import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
 import pl.edu.uwr.pum.recipeapp.viewmodel.SortOrder
 
 class Repository(private val dao: RecipeDAO) {
@@ -17,6 +16,7 @@ class Repository(private val dao: RecipeDAO) {
     suspend fun deleteRecipe(recipe: Recipe)
     {
         dao.deleteRecipe(recipe)
+        dao.deleteCrossRef(recipe.recipeId)
     }
 
     suspend fun insertRecipe(recipe: Recipe)
@@ -28,6 +28,17 @@ class Repository(private val dao: RecipeDAO) {
     {
         dao.updateRecipe(recipe)
     }
+
+    suspend fun createNewIngredient(ingredient: Ingredient, ref: RecipeIngredientCrossRef)
+    {
+        dao.insertIngredient(ingredient)
+        dao.insertRecipeIngredientCrossRef(ref)
+    }
+
+    fun getAssociatedIngredients(recipeId: Int) =
+        dao.getAssociatedReferences(recipeId)
+
+
 
 
     companion object {

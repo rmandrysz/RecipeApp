@@ -29,7 +29,7 @@ interface RecipeDAO {
     suspend fun deleteRecipe(recipe: Recipe)
 
     @Query("DELETE FROM recipeingredientcrossref WHERE recipeId = :recipeId")
-    suspend fun deleteCrossReff(recipeId: Int)
+    suspend fun deleteCrossRef(recipeId: Int)
 
     @Transaction
     @Query("SELECT * FROM recipe WHERE recipeId = :recipeId")
@@ -45,8 +45,12 @@ interface RecipeDAO {
     @Query("SELECT * FROM recipe WHERE (isFavorite = :showFavorite OR isFavorite = 1) AND recipeName LIKE '%' || :searchedName || '%' ORDER BY date")
     fun getRecipesByDate(searchedName: String, showFavorite: Boolean): Flow<List<Recipe>>
 
+    @Query("SELECT * FROM recipeingredientcrossref WHERE recipeId = :recipeId")
+    fun getAssociatedReferences(recipeId: Int): Flow<List<RecipeIngredientCrossRef>>
+
+
     fun getRecipes(query: String, sortOrder: SortOrder, showFavorite: Boolean): Flow<List<Recipe>> =
-        when(sortOrder) {
+        when (sortOrder) {
             SortOrder.BY_NAME -> getRecipesByName(query, showFavorite)
             SortOrder.BY_DATE -> getRecipesByDate(query, showFavorite)
         }

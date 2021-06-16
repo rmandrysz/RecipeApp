@@ -1,6 +1,7 @@
 package pl.edu.uwr.pum.recipeapp.viewmodel
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +9,21 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import pl.edu.uwr.pum.recipeapp.R
 import pl.edu.uwr.pum.recipeapp.databinding.FragmentRecipeEditBinding
+import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
+import pl.edu.uwr.pum.recipeapp.view.IngredientAdapter
 
-class RecipeEditFragment : Fragment() {
+class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentRecipeEditBinding
     private val args: RecipeEditFragmentArgs by navArgs()
@@ -30,11 +35,14 @@ class RecipeEditFragment : Fragment() {
                               savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        viewModel.recipe = args.recipe
+        viewModel.initRecipe(args.recipe)
 
         binding = FragmentRecipeEditBinding.inflate(inflater, container, false)
 
+        val ingredientAdapter = IngredientAdapter(this)
+
         binding.apply {
+
             recipeTitleEditText.setText(viewModel.recipe.recipeName)
             recipeDescriptionEditText.setText(viewModel.recipe.recipeDescription)
             recipeFavoriteCheckBox.isChecked = viewModel.recipe.isFavorite
@@ -59,7 +67,27 @@ class RecipeEditFragment : Fragment() {
                 viewModel.onSaveClick()
             }
 
+            fabAddIngredient.setOnClickListener {
+                viewModel.onAddIngredientClick()
+            }
+
+            ingredientListRecyclerView.apply {
+                adapter = ingredientAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                setHasFixedSize(true)
+            }
+
         }
+
+        setFragmentResultListener("add_request") {_, bundle ->
+            val result = bundle.getInt("add_result")
+            viewModel.onAddResult(result)
+        }
+
+        viewModel.allIngredients.observe(viewLifecycleOwner, {
+            ingredientAdapter.notifyDataSetChanged()
+            ingredientAdapter.submitList(it)
+        })
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.editRecipeEvent.collect { event ->
@@ -76,11 +104,24 @@ class RecipeEditFragment : Fragment() {
                         )
                         findNavController().popBackStack()
                     }
+                    is RecipeEditViewModel.EditRecipeEvent.NavigateToAddIngredientDialog -> {
+                        val action =
+                            RecipeEditFragmentDirections
+                                .actionRecipeEditFragmentToIngredientAddDialogFragment(viewModel.recipe)
+                        findNavController().navigate(action)
+                    }
+                    is RecipeEditViewModel.EditRecipeEvent.ShowIngredientSavedMessage -> {
+                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
 
         return binding.root
+    }
+
+    override fun onItemClick(recipeIngredientCrossRef: RecipeIngredientCrossRef) {
+        viewModel.onIngredientClick(recipeIngredientCrossRef)
     }
 
 }
