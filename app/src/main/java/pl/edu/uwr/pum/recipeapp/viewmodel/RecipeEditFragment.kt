@@ -113,6 +113,10 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                     is RecipeEditViewModel.EditRecipeEvent.ShowIngredientSavedMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
                     }
+
+                    is RecipeEditViewModel.EditRecipeEvent.NavigateToEditIngredientDialog -> {
+
+                    }
                 }
             }
         }

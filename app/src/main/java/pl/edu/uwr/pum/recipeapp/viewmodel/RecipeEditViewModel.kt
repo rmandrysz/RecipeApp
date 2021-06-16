@@ -59,8 +59,8 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
         editRecipeEventChannel.send(EditRecipeEvent.NavigateBackWithResult(EDIT_RECIPE_RESULT_OK))
     }
 
-    fun onIngredientClick(crossRef: RecipeIngredientCrossRef) {
-
+    fun onIngredientClick(crossRef: RecipeIngredientCrossRef) = viewModelScope.launch {
+        editRecipeEventChannel.send(EditRecipeEvent.NavigateToEditIngredientDialog)
     }
 
     fun onAddIngredientClick() = viewModelScope.launch {
@@ -87,6 +87,7 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
         data class ShowInvalidInputMessage(val msg: String) : EditRecipeEvent()
         data class NavigateBackWithResult(val result: Int) : EditRecipeEvent()
         object NavigateToAddIngredientDialog : EditRecipeEvent()
+        object NavigateToEditIngredientDialog : EditRecipeEvent()
         data class ShowIngredientSavedMessage(val msg: String) : EditRecipeEvent()
     }
 }
