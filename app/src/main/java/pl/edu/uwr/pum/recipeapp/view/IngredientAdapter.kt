@@ -28,6 +28,7 @@ class IngredientAdapter(private val listener: OnItemClickListener)
         fun bind(crossRef: RecipeIngredientCrossRef) {
             binding.apply {
                 nameTextView.text = crossRef.ingredientName
+                nameTextView.isSelected = true
                 amountTextView.text = crossRef.ingredientAmount
             }
         }

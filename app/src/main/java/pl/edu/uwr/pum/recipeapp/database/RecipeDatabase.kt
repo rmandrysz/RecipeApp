@@ -32,7 +32,7 @@ abstract class RecipeDatabase : RoomDatabase() {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     RecipeDatabase::class.java,
-                    "recipe_db"
+                    "recipe_db3"
                 ).build().also {
                     INSTANCE = it
                 }

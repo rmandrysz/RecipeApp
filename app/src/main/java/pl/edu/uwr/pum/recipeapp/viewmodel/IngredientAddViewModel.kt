@@ -12,6 +12,7 @@ import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_CANCELLED
 import pl.edu.uwr.pum.recipeapp.ADD_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
 import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
+import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
 import pl.edu.uwr.pum.recipeapp.repository.Repository
 
@@ -19,6 +20,9 @@ class IngredientAddViewModel(@NonNull application: Application) :
     AndroidViewModel(application) {
 
     private val repository: Repository
+    lateinit var crossRef: RecipeIngredientCrossRef
+    lateinit var recipe: Recipe
+    lateinit var ingredient: Ingredient
 
     private val addIngredientEventChannel = Channel<AddIngredientEvent>()
     val addIngredientEvent = addIngredientEventChannel.receiveAsFlow()
@@ -29,20 +33,20 @@ class IngredientAddViewModel(@NonNull application: Application) :
         repository = Repository.getInstance(application, dao)
     }
 
-    fun onSubmitClick(name: String, amount: String, recipeId: Int) {
-        if (name.isBlank()) {
+    fun onSubmitClick() {
+        if (crossRef.ingredientName.isBlank()) {
             showInvalidInputMessage("Name cannot be empty")
             return
         }
 
-        val newIngredient = Ingredient(name)
-        val newRef = RecipeIngredientCrossRef(recipeId, name, amount)
-        createNewIngredient(newIngredient, newRef)
+        createNewIngredient()
     }
 
-    private fun createNewIngredient(ingredient: Ingredient, ref: RecipeIngredientCrossRef) =
+    private fun createNewIngredient() =
         viewModelScope.launch {
-            repository.createNewIngredient(ingredient, ref)
+            ingredient.ingredientName = crossRef.ingredientName
+
+            repository.createNewIngredient(ingredient, crossRef)
             addIngredientEventChannel.send(
                 AddIngredientEvent.NavigateBackWithResult(
                     ADD_RECIPE_RESULT_OK
@@ -60,6 +64,34 @@ class IngredientAddViewModel(@NonNull application: Application) :
                 ADD_RECIPE_RESULT_CANCELLED
             )
         )
+    }
+
+    fun initRef(ref: RecipeIngredientCrossRef?) {
+        ref?.let {
+            crossRef = ref
+        } ?: kotlin.run {
+            crossRef = RecipeIngredientCrossRef(
+                recipeId = recipe.recipeId,
+                ingredientName = "", ingredientAmount = ""
+            )
+        }
+
+        initIngredient()
+    }
+
+    private fun initIngredient() = viewModelScope.launch {
+        val ingredientList = repository.getIngredient(crossRef.ingredientName)
+
+        ingredient = if (ingredientList.isEmpty()) {
+            Ingredient(ingredientName = "")
+        } else {
+            ingredientList[0]
+        }
+
+    }
+
+    fun initRecipe(recipe: Recipe) {
+        this.recipe = recipe
     }
 
     sealed class AddIngredientEvent {

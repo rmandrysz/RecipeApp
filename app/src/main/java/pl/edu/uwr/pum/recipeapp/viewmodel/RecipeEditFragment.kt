@@ -1,7 +1,6 @@
 package pl.edu.uwr.pum.recipeapp.viewmodel
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -77,6 +78,22 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                 setHasFixedSize(true)
             }
 
+            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val crossRef = ingredientAdapter.currentList[viewHolder.bindingAdapterPosition]
+                    viewModel.onIngredientSwiped(crossRef)
+                }
+            }).attachToRecyclerView(ingredientListRecyclerView)
+
         }
 
         setFragmentResultListener("add_request") {_, bundle ->
@@ -115,7 +132,10 @@ class RecipeEditFragment : Fragment(R.layout.fragment_recipe_edit), IngredientAd
                     }
 
                     is RecipeEditViewModel.EditRecipeEvent.NavigateToEditIngredientDialog -> {
-
+                        val action = RecipeEditFragmentDirections
+                            .actionRecipeEditFragmentToIngredientAddDialogFragment(viewModel.recipe)
+                        action.crossRef = event.ref
+                        findNavController().navigate(action)
                     }
                 }
             }

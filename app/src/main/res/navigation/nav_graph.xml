@@ -42,5 +42,10 @@
         <argument
             android:name="recipe"
             app:argType="pl.edu.uwr.pum.recipeapp.model.entities.Recipe" />
+        <argument
+            android:name="crossRef"
+            app:argType="pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </dialog>
 </navigation>

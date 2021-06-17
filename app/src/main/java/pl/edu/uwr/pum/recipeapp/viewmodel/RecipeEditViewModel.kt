@@ -3,19 +3,16 @@ package pl.edu.uwr.pum.recipeapp.viewmodel
 import android.app.Application
 import androidx.annotation.NonNull
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_CANCELLED
 import pl.edu.uwr.pum.recipeapp.EDIT_RECIPE_RESULT_OK
 import pl.edu.uwr.pum.recipeapp.database.RecipeDatabase
-import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
 import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
 import pl.edu.uwr.pum.recipeapp.repository.Repository
@@ -28,7 +25,7 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
     private val editRecipeEventChannel = Channel<EditRecipeEvent>()
     val editRecipeEvent = editRecipeEventChannel.receiveAsFlow()
 
-    val associatedRecipe = MutableStateFlow(-1)
+    private val associatedRecipe = MutableStateFlow(-1)
     private val ingredientFlow = associatedRecipe.flatMapLatest {
         repository.getAssociatedIngredients(it)
     }
@@ -60,7 +57,7 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
     }
 
     fun onIngredientClick(crossRef: RecipeIngredientCrossRef) = viewModelScope.launch {
-        editRecipeEventChannel.send(EditRecipeEvent.NavigateToEditIngredientDialog)
+        editRecipeEventChannel.send(EditRecipeEvent.NavigateToEditIngredientDialog(crossRef))
     }
 
     fun onAddIngredientClick() = viewModelScope.launch {
@@ -83,11 +80,20 @@ class RecipeEditViewModel(@NonNull application: Application) : AndroidViewModel(
         associatedRecipe.value = newRecipe.recipeId
     }
 
+    fun onIngredientSwiped(ref: RecipeIngredientCrossRef) = viewModelScope.launch {
+        repository.deleteCrossRef(ref)
+        showIngredientSavedMessage("Ingredient successfully deleted")
+    }
+
+    fun onUndoDeleteIngredientClick(ref: RecipeIngredientCrossRef) = viewModelScope.launch {
+        repository.insertCrossRef(ref)
+    }
+
     sealed class EditRecipeEvent {
         data class ShowInvalidInputMessage(val msg: String) : EditRecipeEvent()
         data class NavigateBackWithResult(val result: Int) : EditRecipeEvent()
         object NavigateToAddIngredientDialog : EditRecipeEvent()
-        object NavigateToEditIngredientDialog : EditRecipeEvent()
+        data class NavigateToEditIngredientDialog(val ref: RecipeIngredientCrossRef) : EditRecipeEvent()
         data class ShowIngredientSavedMessage(val msg: String) : EditRecipeEvent()
     }
 }

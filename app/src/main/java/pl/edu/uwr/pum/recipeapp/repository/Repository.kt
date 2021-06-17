@@ -16,7 +16,7 @@ class Repository(private val dao: RecipeDAO) {
     suspend fun deleteRecipe(recipe: Recipe)
     {
         dao.deleteRecipe(recipe)
-        dao.deleteCrossRef(recipe.recipeId)
+        dao.deleteAssociatedCrossReferences(recipe.recipeId)
     }
 
     suspend fun insertRecipe(recipe: Recipe)
@@ -38,8 +38,14 @@ class Repository(private val dao: RecipeDAO) {
     fun getAssociatedIngredients(recipeId: Int) =
         dao.getAssociatedReferences(recipeId)
 
+    suspend fun getIngredient(ingredientName: String) =
+        dao.getReferencedIngredient(ingredientName)
 
+    suspend fun deleteCrossRef(crossRef: RecipeIngredientCrossRef) =
+        dao.deleteCrossRef(crossRef)
 
+    suspend fun insertCrossRef(crossRef: RecipeIngredientCrossRef) =
+        dao.insertRecipeIngredientCrossRef(crossRef)
 
     companion object {
         @Volatile

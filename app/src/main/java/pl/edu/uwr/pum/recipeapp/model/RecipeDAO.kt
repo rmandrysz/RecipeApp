@@ -16,7 +16,7 @@ interface RecipeDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipe(recipe: Recipe)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIngredient(ingredient: Ingredient)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -28,8 +28,11 @@ interface RecipeDAO {
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
 
+    @Delete
+    suspend fun deleteCrossRef(crossRef: RecipeIngredientCrossRef)
+
     @Query("DELETE FROM recipeingredientcrossref WHERE recipeId = :recipeId")
-    suspend fun deleteCrossRef(recipeId: Int)
+    suspend fun deleteAssociatedCrossReferences(recipeId: Int)
 
     @Transaction
     @Query("SELECT * FROM recipe WHERE recipeId = :recipeId")
@@ -48,6 +51,8 @@ interface RecipeDAO {
     @Query("SELECT * FROM recipeingredientcrossref WHERE recipeId = :recipeId")
     fun getAssociatedReferences(recipeId: Int): Flow<List<RecipeIngredientCrossRef>>
 
+    @Query("SELECT * FROM ingredient WHERE ingredientName = :ingredientName")
+    suspend fun getReferencedIngredient(ingredientName: String): List<Ingredient>
 
     fun getRecipes(query: String, sortOrder: SortOrder, showFavorite: Boolean): Flow<List<Recipe>> =
         when (sortOrder) {
