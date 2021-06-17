@@ -44,6 +44,7 @@ class IngredientAddViewModel(@NonNull application: Application) :
 
     private fun createNewIngredient() =
         viewModelScope.launch {
+
             ingredient.ingredientName = crossRef.ingredientName
 
             repository.createNewIngredient(ingredient, crossRef)

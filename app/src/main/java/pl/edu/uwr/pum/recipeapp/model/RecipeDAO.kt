@@ -25,6 +25,9 @@ interface RecipeDAO {
     @Update
     suspend fun updateRecipe(recipe: Recipe)
 
+    @Update
+    suspend fun updateIngredient(ingredient: Ingredient)
+
     @Delete
     suspend fun deleteRecipe(recipe: Recipe)
 
@@ -50,6 +53,9 @@ interface RecipeDAO {
 
     @Query("SELECT * FROM recipeingredientcrossref WHERE recipeId = :recipeId")
     fun getAssociatedReferences(recipeId: Int): Flow<List<RecipeIngredientCrossRef>>
+
+    @Query("SELECT * FROM recipeingredientcrossref WHERE ingredientName = :ingredientName")
+    fun getIngredientReferences(ingredientName: String): List<RecipeIngredientCrossRef>
 
     @Query("SELECT * FROM ingredient WHERE ingredientName = :ingredientName")
     suspend fun getReferencedIngredient(ingredientName: String): List<Ingredient>
