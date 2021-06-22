@@ -25,6 +25,7 @@
                     android:autofillHints="true"
                     android:ellipsize="end"
                     android:hint="Title"
+                    android:singleLine="true"
                     android:textSize="25sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
