@@ -11,7 +11,7 @@ data class IngredientWithRecipes(
     val ingredient: Ingredient,
 
     @Relation(
-        parentColumn = "ingredientName",
+        parentColumn = "ingredientId",
         entityColumn = "recipeId",
         associateBy = Junction(RecipeIngredientCrossRef::class)
     )

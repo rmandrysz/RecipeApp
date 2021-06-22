@@ -12,7 +12,7 @@ data class RecipeWithIngredients(
 
     @Relation(
         parentColumn = "recipeId",
-        entityColumn = "ingredientName",
+        entityColumn = "ingredientId",
         associateBy = Junction(RecipeIngredientCrossRef::class)
     )
     val ingredients: List<Ingredient>

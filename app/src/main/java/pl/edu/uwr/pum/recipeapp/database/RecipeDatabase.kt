@@ -8,14 +8,18 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import pl.edu.uwr.pum.recipeapp.model.RecipeDAO
 import pl.edu.uwr.pum.recipeapp.model.entities.Ingredient
 import pl.edu.uwr.pum.recipeapp.model.entities.Recipe
+import pl.edu.uwr.pum.recipeapp.model.entities.Tag
 import pl.edu.uwr.pum.recipeapp.model.relations.RecipeIngredientCrossRef
+import pl.edu.uwr.pum.recipeapp.model.relations.RecipeTagCrossRef
 import java.security.AccessControlContext
 
 @Database(
     entities = [
         Recipe::class,
         Ingredient::class,
-        RecipeIngredientCrossRef::class
+        Tag::class,
+        RecipeIngredientCrossRef::class,
+        RecipeTagCrossRef::class
     ],
     version = 1,
 )
@@ -32,7 +36,7 @@ abstract class RecipeDatabase : RoomDatabase() {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     RecipeDatabase::class.java,
-                    "recipe_db3"
+                    "recipe_db4"
                 ).build().also {
                     INSTANCE = it
                 }
